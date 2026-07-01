@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Si Pon Farm - Sistem Management Peternakan</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .sidebar { background-color: #2c3e50; min-height: 100vh; color: white; }
+        .sidebar .nav-link { color: #ecf0f1; margin: 5px 0; }
+        .sidebar .nav-link.active { background-color: #1abc9c; color: white; font-weight: bold; }
+        .main-content { padding: 20px; }
+        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            .card { box-shadow: none; border: none; }
+        }
+        .certificate-box {
+            border: 10px double #2c3e50;
+            padding: 40px;
+            background: #fffdf5;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- SIDEBAR MENU (no-print) -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 no-print">
+            <h3 class="text-center mb-4">Si Pon Farm 🐐</h3>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" onclick="switchMenu('menu-kambing', this)">1. Data Master Kambing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="switchMenu('menu-kehamilan', this)">2. Input Kehamilan & Kelahiran</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="switchMenu('menu-laporan', this)">3. Pencarian & Laporan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="switchMenu('menu-sertifikat', this)">4. Cetak Sertifikat</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            
+            <!-- MENU 1: DATA MASTER KAMBING -->
+            <div id="menu-kambing" class="menu-section">
+                <div class="card p-4">
+                    <h2 class="mb-4 text-primary">Master Data Id Kambing</h2>
+                    <form id="form-kambing" onsubmit="simpanKambing(event)">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">ID Kambing</label>
+                                <input type="text" id="id-kambing" class="form-control" placeholder="Contoh: KMB-001" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Nama / Alias</label>
+                                <input type="text" id="nama-kambing" class="form-control" placeholder="Si Jalu">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Jenis Kelamin</label>
+                                <select id="jk-kambing" class="form-select" required>
+                                    <option value="Betina">Betina</option>
+                                    <option value="Jantan">Jantan</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tanggal Lahir</label>
+                                <input type="date" id="tgl-lahir-kambing" class="form-control" required>
+                            </div>
+                            <div class="col-md-12 text-end mt-3">
+                                <button type="submit" class="btn btn-success">Simpan Id Kambing</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    <h4>Daftar Semua Kambing Terdaftar</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama</th>
+                                    <th>Jenis Kelamin</th>
+                                    <th>Tanggal Lahir</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-kambing-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MENU 2: INPUT KEHAMILAN -->
+            <div id="menu-kehamilan" class="menu-section d-none">
+                <div class="card p-4">
+                    <h2 class="mb-4 text-primary">Data Kehamilan & Kelahiran Indukan</h2>
+                    <form id="form-kehamilan" onsubmit="simpanKehamilan(event)">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">ID Indukan (Betina)</label>
+                                <select id="id-indukan" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">ID Pejantan (Jantan)</label>
+                                <select id="id-pejantan" class="form-select" required></select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tanggal Kawin</label>
+                                <input type="date" id="tgl-kawin" class="form-control" onchange="hitungPrediksiLahir()" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Prediksi Kelahiran (Otomatis +150 Hari)</label>
+                                <input type="date" id="prediksi-lahir" class="form-control" readonly>
+                            </div>
+                            
+                            <div class="col-12"><hr><h5>Bagian Kelahiran (Diisi jika sudah melahirkan)</h5></div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label">Tanggal Kelahiran</label>
+                                <input type="date" id="tgl-lahir-anak" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Jumlah Anakan Lahir</label>
+                                <input type="number" id="jumlah-anak" class="form-control" min="0" placeholder="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Jenis Kelamin Anakan</label>
+                                <input type="text" id="jk-anak" class="form-control" placeholder="Contoh: 1 Jantan, 1 Betina">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Berat Lahir Anakan (kg)</label>
+                                <input type="text" id="berat-anak" class="form-control" placeholder="Contoh: 2.5 , 3.0">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Foto Anakan</label>
+                                <input type="file" id="foto-anak" class="form-control" accept="image/*" onchange="handleFoto(event)">
+                                <div id="preview-foto-box" class="mt-2 d-none">
+                                    <img id="preview-foto" src="" style="max-height: 120px; border-radius: 8px;">
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-primary">Simpan Data Kehamilan</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- MENU 3: PENCARIAN & LAPORAN -->
+            <div id="menu-laporan" class="menu-section d-none">
+                <div class="card p-4">
+                    <h2 class="mb-4 text-primary no-print">Pencarian & Laporan Riwayat Peternakan</h2>
+                    
+                    <div class="row g-3 mb-4 no-print">
+                        <div class="col-md-6">
+                            <input type="text" id="keyword-cari" class="form-control" placeholder="Cari berdasarkan ID Indukan / ID Pejantan...">
+                        </div>
+                        <div class="col-md-6">
+                            <button class="btn btn-secondary me-2" onclick="cariData()">Cari Data</button>
+                            <button class="btn btn-dark" onclick="window.print()"><i class="btn-icon"></i> Cetak / Print Laporan</button>
+                        </div>
+                    </div>
+
+                    <div class="print-header text-center mb-4">
+                        <h2>LAPORAN DATA RIWAYAT KELAHIRAN - SI PON FARM</h2>
+                        <p>Tanggal Cetak: <span id="print-date"></span></p>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
