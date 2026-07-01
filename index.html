@@ -3,181 +3,728 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Si Pon Farm - Sistem Management Peternakan</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://jsdelivr.net" rel="stylesheet">
+    <title>Pencatatan Ternak Si Pon Farm</title>
     <style>
-        body { background-color: #f4f6f9; }
-        .sidebar { background-color: #2c3e50; min-height: 100vh; color: white; }
-        .sidebar .nav-link { color: #ecf0f1; margin: 5px 0; }
-        .sidebar .nav-link.active { background-color: #1abc9c; color: white; font-weight: bold; }
-        .main-content { padding: 20px; }
-        .card { border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white; color: black; }
-            .card { box-shadow: none; border: none; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f9f5;
+            color: #333;
+            margin: 0;
+            padding: 10px;
         }
-        .certificate-box {
-            border: 10px double #2c3e50;
-            padding: 40px;
-            background: #fffdf5;
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background-color: #276749;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .nav-tabs {
+            display: flex;
+            background-color: #c6f6d5;
+            border-bottom: 2px solid #276749;
+        }
+        .nav-tabs button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            font-weight: bold;
+            color: #22543d;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-tabs button:hover {
+            background-color: #9ae6b4;
+        }
+        .nav-tabs button.active {
+            background-color: #276749;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        input, select {
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #38a169;
+            box-shadow: 0 0 0 2px rgba(56, 161, 105, 0.2);
+        }
+        button.btn-simpan {
+            background-color: #38a169;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.3s;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        button.btn-simpan:hover {
+            background-color: #2f855a;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 800px;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f0fff4;
+            color: #22543d;
+            white-space: nowrap;
+        }
+        tr:nth-child(even) {
+            background-color: #f7fafc;
+        }
+        .btn-hapus {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-hapus:hover {
+            background-color: #c53030;
+        }
+        .section-title {
+            color: #2f855a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        .info-text {
+            color: #d69e2e;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+        }
+        /* Style Tambahan untuk Input Anak */
+        .box-anak-container {
+            background-color: #f7fafc;
+            border: 2px dashed #cbd5e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .card-anak {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .grid-anak-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .badge-anak {
+            background: #f0fff4;
+            border: 1px solid #c6f6d5;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            display: inline-block;
+            text-align: center;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+        .img-preview-table {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 4px;
+            cursor: pointer;
+            border: 1px solid #cbd5e0;
+            transition: 0.2s;
+        }
+        .img-preview-table:hover {
+            transform: scale(1.1);
+        }
+        /* Modal Popup Foto */
+        #modalFoto {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
             position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .close-modal {
+            position: absolute;
+            top: -35px;
+            right: 0;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- SIDEBAR MENU (no-print) -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-3 no-print">
-            <h3 class="text-center mb-4">Si Pon Farm 🐐</h3>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#" onclick="switchMenu('menu-kambing', this)">1. Data Master Kambing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="switchMenu('menu-kehamilan', this)">2. Input Kehamilan & Kelahiran</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="switchMenu('menu-laporan', this)">3. Pencarian & Laporan</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="switchMenu('menu-sertifikat', this)">4. Cetak Sertifikat</a>
-                </li>
-            </ul>
-        </nav>
+<div class="container">
+    <div class="header">Pencatatan Ternak Si Pon Farm</div>
+    
+    <!-- Navigasi Menu -->
+    <div class="nav-tabs">
+        <button class="active" onclick="bukaTab('tabKandang', this)">Kandang Utama</button>
+        <button onclick="bukaTab('tabKehamilan', this)">Kehamilan Induk</button>
+        <button onclick="bukaTab('tabPencarian', this)">🔍 Pencarian Data</button>
+    </div>
 
-        <!-- MAIN CONTENT -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
-            
-            <!-- MENU 1: DATA MASTER KAMBING -->
-            <div id="menu-kambing" class="menu-section">
-                <div class="card p-4">
-                    <h2 class="mb-4 text-primary">Master Data Id Kambing</h2>
-                    <form id="form-kambing" onsubmit="simpanKambing(event)">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">ID Kambing</label>
-                                <input type="text" id="id-kambing" class="form-control" placeholder="Contoh: KMB-001" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Nama / Alias</label>
-                                <input type="text" id="nama-kambing" class="form-control" placeholder="Si Jalu">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Jenis Kelamin</label>
-                                <select id="jk-kambing" class="form-select" required>
-                                    <option value="Betina">Betina</option>
-                                    <option value="Jantan">Jantan</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Tanggal Lahir</label>
-                                <input type="date" id="tgl-lahir-kambing" class="form-control" required>
-                            </div>
-                            <div class="col-md-12 text-end mt-3">
-                                <button type="submit" class="btn btn-success">Simpan Id Kambing</button>
-                            </div>
-                        </div>
-                    </form>
-                    
-                    <hr class="my-4">
-                    <h4>Daftar Semua Kambing Terdaftar</h4>
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nama</th>
-                                    <th>Jenis Kelamin</th>
-                                    <th>Tanggal Lahir</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabel-kambing-body"></tbody>
-                        </table>
-                    </div>
+    <!-- TAB 1: KANDANG UTAMA -->
+    <div id="tabKandang" class="tab-content active">
+        <h3 class="section-title">Input Data Ternak Baru</h3>
+        <form id="formKambing">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>ID / Tag Telinga *</label>
+                    <input type="text" id="idKambing" placeholder="Contoh: K-001" required>
+                </div>
+                <div class="input-group">
+                    <label>Jenis Kelamin *</label>
+                    <select id="jenisKelamin" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Jantan">Jantan</option>
+                        <option value="Betina">Betina</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Tanggal Lahir *</label>
+                    <input type="date" id="tanggalLahir" required>
+                    <div id="teksUmur" class="info-text">Umur: - Bulan</div>
+                </div>
+                <div class="input-group">
+                    <label>ID Indukan (Ibu)</label>
+                    <input type="text" id="idIndukan" placeholder="ID Induk">
+                </div>
+                <div class="input-group">
+                    <label>ID Pejantan (Bapak)</label>
+                    <input type="text" id="idPejantan" placeholder="ID Pejantan">
+                </div>
+                <div class="input-group">
+                    <label>Berat (Kg) *</label>
+                    <input type="number" id="berat" step="0.1" placeholder="0.0" required>
+                </div>
+                <div class="input-group">
+                    <label>Status *</label>
+                    <select id="statusKandang" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="Sehat">Sehat</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Bunting">Bunting</option>
+                        <option value="Laktasi">Laktasi (Menyusui)</option>
+                        <option value="Lepas Sapih">Lepas Sapih</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Catatan</label>
+                    <input type="text" id="catatanKandang" placeholder="Keterangan tambahan">
+                </div>
+            </div>
+            <button type="submit" class="btn-simpan">Simpan ke Kandang</button>
+        </form>
+        <h3 class="section-title">Daftar Seluruh Ternak</h3>
+        <div class="table-responsive">
+            <table id="tabelKandang">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>J. Kelamin</th><th>Umur (Bln)</th><th>Induk</th><th>Pejantan</th><th>Berat</th><th>Status</th><th>Catatan</th><th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 2: KEHAMILAN INDUK -->
+    <div id="tabKehamilan" class="tab-content">
+        <h3 class="section-title">Catat Perkawinan / Kehamilan</h3>
+        <form id="formKehamilan">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>ID Induk (Betina) *</label>
+                    <input type="text" id="idIndukHamil" placeholder="ID Induk" required>
+                </div>
+                <div class="input-group">
+                    <label>ID Pejantan Pemacek *</label>
+                    <input type="text" id="idPejantanMacek" placeholder="ID Pejantan" required>
+                </div>
+                <div class="input-group">
+                    <label>Tanggal Kawin *</label>
+                    <input type="date" id="tanggalKawin" required>
+                    <div id="teksPrediksi" class="info-text">Prediksi Lahir: -</div>
+                </div>
+                <div class="input-group">
+                    <label>Status Kehamilan *</label>
+                    <select id="statusHamil" required>
+                        <option value="Menunggu Pengecekan">Menunggu Pengecekan</option>
+                        <option value="Positif Bunting">Positif Bunting</option>
+                        <option value="Gagal/Minta Kawin Lagi">Gagal / Minta Kawin Lagi</option>
+                        <option value="Sudah Lahir">Sudah Lahir</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- MENU 2: INPUT KEHAMILAN -->
-            <div id="menu-kehamilan" class="menu-section d-none">
-                <div class="card p-4">
-                    <h2 class="mb-4 text-primary">Data Kehamilan & Kelahiran Indukan</h2>
-                    <form id="form-kehamilan" onsubmit="simpanKehamilan(event)">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label">ID Indukan (Betina)</label>
-                                <select id="id-indukan" class="form-select" required></select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">ID Pejantan (Jantan)</label>
-                                <select id="id-pejantan" class="form-select" required></select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Tanggal Kawin</label>
-                                <input type="date" id="tgl-kawin" class="form-control" onchange="hitungPrediksiLahir()" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Prediksi Kelahiran (Otomatis +150 Hari)</label>
-                                <input type="date" id="prediksi-lahir" class="form-control" readonly>
-                            </div>
-                            
-                            <div class="col-12"><hr><h5>Bagian Kelahiran (Diisi jika sudah melahirkan)</h5></div>
-                            
-                            <div class="col-md-3">
-                                <label class="form-label">Tanggal Kelahiran</label>
-                                <input type="date" id="tgl-lahir-anak" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Jumlah Anakan Lahir</label>
-                                <input type="number" id="jumlah-anak" class="form-control" min="0" placeholder="0">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Jenis Kelamin Anakan</label>
-                                <input type="text" id="jk-anak" class="form-control" placeholder="Contoh: 1 Jantan, 1 Betina">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Berat Lahir Anakan (kg)</label>
-                                <input type="text" id="berat-anak" class="form-control" placeholder="Contoh: 2.5 , 3.0">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Foto Anakan</label>
-                                <input type="file" id="foto-anak" class="form-control" accept="image/*" onchange="handleFoto(event)">
-                                <div id="preview-foto-box" class="mt-2 d-none">
-                                    <img id="preview-foto" src="" style="max-height: 120px; border-radius: 8px;">
-                                </div>
-                            </div>
-                            
-                            <div class="col-12 text-end mt-4">
-                                <button type="submit" class="btn btn-primary">Simpan Data Kehamilan</button>
-                            </div>
-                        </div>
-                    </form>
+            <!-- Bagian Isian Dinamis Jika Status "Sudah Lahir" -->
+            <div id="containerAnak" class="box-anak-container">
+                <h4 style="margin-top:0; color:#2c5282;">👶 Data Kelahiran Anak</h4>
+                <div class="form-grid" style="grid-template-columns: 1fr;">
+                    <div class="input-group" style="max-width: 300px;">
+                        <label>Total Anak yang Lahir (Ekor)</label>
+                        <input type="number" id="jumlahAnak" min="1" max="5" value="1">
+                    </div>
+                </div>
+                <div id="rincianAnak">
+                    <!-- Input per anak akan di-generate otomatis via JS -->
                 </div>
             </div>
 
-            <!-- MENU 3: PENCARIAN & LAPORAN -->
-            <div id="menu-laporan" class="menu-section d-none">
-                <div class="card p-4">
-                    <h2 class="mb-4 text-primary no-print">Pencarian & Laporan Riwayat Peternakan</h2>
-                    
-                    <div class="row g-3 mb-4 no-print">
-                        <div class="col-md-6">
-                            <input type="text" id="keyword-cari" class="form-control" placeholder="Cari berdasarkan ID Indukan / ID Pejantan...">
+            <button type="submit" class="btn-simpan">Simpan Data Kehamilan</button>
+        </form>
+        
+        <h3 class="section-title">Daftar Kehamilan & Riwayat Kelahiran</h3>
+        <div class="table-responsive">
+            <table id="tabelKehamilan">
+                <thead>
+                    <tr>
+                        <th>ID Induk</th><th>Pemacek</th><th>Tgl Kawin</th><th>Prediksi / Hasil Lahir</th><th>Status</th><th>Detail Anak & Foto</th><th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 3: PENCARIAN TERPADU -->
+    <div id="tabPencarian" class="tab-content">
+        <h3 class="section-title">Cari Data Ternak atau Kehamilan</h3>
+        <div class="search-box">
+            <input type="text" id="inputPencarian" placeholder="🔍 Masukkan ID kambing, status, nama indukan/pejantan, atau jenis kelamin anak...">
+        </div>
+        
+        <h3 class="section-title">Hasil Pencarian: Kandang Utama</h3>
+        <div class="table-responsive">
+            <table id="tabelHasilKandang">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>J. Kelamin</th><th>Umur</th><th>Induk</th><th>Pejantan</th><th>Berat</th><th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <h3 class="section-title">Hasil Pencarian: Data Kehamilan & Anak</h3>
+        <div class="table-responsive">
+            <table id="tabelHasilKehamilan">
+                <thead>
+                    <tr>
+                        <th>ID Induk</th><th>Pemacek</th><th>Tgl Kawin</th><th>Prediksi / Hasil</th><th>Status</th><th>Detail Anak & Foto</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Popup Viewer Foto -->
+<div id="modalFoto" onclick="tutupModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="tutupModal()">&times;</span>
+        <img id="imgModal" src="" alt="Foto Anak Kambing">
+    </div>
+</div>
+
+<script>
+    // --- Inisialisasi Database Lokal ---
+    // Menggunakan nama kunci penyimpanan baru agar data V3 tidak bentrok
+    let dbKandang = JSON.parse(localStorage.getItem('dbKandang_v4')) || [];
+    let dbKehamilan = JSON.parse(localStorage.getItem('dbKehamilan_v4')) || [];
+
+    // --- Sistem Tab Menu ---
+    function bukaTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+        
+        renderTabelKandang();
+        renderTabelKehamilan();
+        if(tabId === 'tabPencarian') jalankanPencarian();
+    }
+
+    // --- Penghitung Umur & Estimasi Kehamilan ---
+    function hitungUmurBulan(tglLahir) {
+        if (!tglLahir) return 0;
+        const lahir = new Date(tglLahir);
+        const sekarang = new Date();
+        let umurBulan = (sekarang.getFullYear() - lahir.getFullYear()) * 12;
+        umurBulan -= lahir.getMonth();
+        umurBulan += sekarang.getMonth();
+        if (sekarang.getDate() < lahir.getDate()) umurBulan--;
+        return umurBulan > 0 ? umurBulan : 0;
+    }
+
+    function hitungPrediksiLahir(tglKawin) {
+        if (!tglKawin) return '-';
+        const date = new Date(tglKawin);
+        date.setDate(date.getDate() + 150); // Kehamilan kambing ~150 hari
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const y = date.getFullYear();
+        return `${d}-${m}-${y}`;
+    }
+
+    // --- Event Listener untuk Form ---
+    document.getElementById('tanggalLahir').addEventListener('change', function() {
+        document.getElementById('teksUmur').innerText = `Umur: ${hitungUmurBulan(this.value)} Bulan`;
+    });
+
+    document.getElementById('tanggalKawin').addEventListener('change', function() {
+        document.getElementById('teksPrediksi').innerText = `Prediksi Lahir: ${hitungPrediksiLahir(this.value)}`;
+    });
+
+    // --- Logika Deteksi Status "Sudah Lahir" (FITUR V4) ---
+    const selectStatusHamil = document.getElementById('statusHamil');
+    const containerAnak = document.getElementById('containerAnak');
+    const inputJumlahAnak = document.getElementById('jumlahAnak');
+    const rincianAnak = document.getElementById('rincianAnak');
+
+    selectStatusHamil.addEventListener('change', function() {
+        // Jika user memilih "Sudah Lahir", munculkan form khusus anak
+        if (this.value === 'Sudah Lahir') {
+            containerAnak.style.display = 'block';
+            generateInputAnak();
+        } else {
+            containerAnak.style.display = 'none';
+        }
+    });
+
+    inputJumlahAnak.addEventListener('input', generateInputAnak);
+
+    function generateInputAnak() {
+        const jml = parseInt(inputJumlahAnak.value) || 1;
+        rincianAnak.innerHTML = '';
+        for (let i = 1; i <= jml; i++) {
+            rincianAnak.innerHTML += `
+                <div class="card-anak">
+                    <span style="font-weight: bold; color: #2f855a; font-size: 13px;">👶 Data Anak Ke-${i}</span>
+                    <div class="grid-anak-input">
+                        <div class="input-group">
+                            <label>Jenis Kelamin</label>
+                            <select class="jk-anak" required>
+                                <option value="Jantan">Jantan</option>
+                                <option value="Betina">Betina</option>
+                            </select>
                         </div>
-                        <div class="col-md-6">
-                            <button class="btn btn-secondary me-2" onclick="cariData()">Cari Data</button>
-                            <button class="btn btn-dark" onclick="window.print()"><i class="btn-icon"></i> Cetak / Print Laporan</button>
+                        <div class="input-group">
+                            <label>Foto Anak Kambing</label>
+                            <input type="file" class="foto-anak" accept="image/*">
                         </div>
                     </div>
+                </div>
+            `;
+        }
+    }
 
-                    <div class="print-header text-center mb-4">
-                        <h2>LAPORAN DATA RIWAYAT KELAHIRAN - SI PON FARM</h2>
-                        <p>Tanggal Cetak: <span id="print-date"></span></p>
-                    </div>
+    // --- Kompresi Gambar ke Base64 ---
+    function kompresGambar(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 300; 
+                    let width = img.width;
+                    let height = img.height;
 
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+                }
+            };
+        });
+    }
+
+    // --- Pengelolaan TAB 1: Kandang Utama ---
+    function renderTabelKandang() {
+        const tbody = document.querySelector('#tabelKandang tbody');
+        tbody.innerHTML = '';
+        dbKandang.forEach(k => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${k.id}</strong></td>
+                    <td>${k.jk}</td>
+                    <td>${k.tglLahir} <br><small style="color:#d69e2e">(${hitungUmurBulan(k.tglLahir)} bln)</small></td>
+                    <td>${k.induk}</td>
+                    <td>${k.pejantan}</td>
+                    <td>${k.berat} Kg</td>
+                    <td>${k.status}</td>
+                    <td>${k.catatan}</td>
+                    <td><button class="btn-hapus" onclick="hapusKandang('${k.id}')">Hapus</button></td>
+                </tr>`;
+        });
+    }
+
+    document.getElementById('formKambing').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const id = document.getElementById('idKambing').value;
+        if(dbKandang.some(k => k.id.toLowerCase() === id.toLowerCase())) return alert('ID Kandang sudah terdaftar!');
+        
+        dbKandang.push({
+            id: id,
+            jk: document.getElementById('jenisKelamin').value,
+            tglLahir: document.getElementById('tanggalLahir').value,
+            induk: document.getElementById('idIndukan').value || '-',
+            pejantan: document.getElementById('idPejantan').value || '-',
+            berat: document.getElementById('berat').value,
+            status: document.getElementById('statusKandang').value,
+            catatan: document.getElementById('catatanKandang').value || '-'
+        });
+        localStorage.setItem('dbKandang_v4', JSON.stringify(dbKandang));
+        this.reset(); 
+        document.getElementById('teksUmur').innerText = 'Umur: - Bulan';
+        renderTabelKandang();
+    });
+
+    function hapusKandang(id) {
+        if(confirm(`Hapus data kambing ${id}?`)) {
+            dbKandang = dbKandang.filter(k => k.id !== id);
+            localStorage.setItem('dbKandang_v4', JSON.stringify(dbKandang));
+            renderTabelKandang();
+        }
+    }
+
+    // --- Pengelolaan TAB 2: Kehamilan & Kelahiran Anak ---
+    function generateHtmlDetailAnak(anakArray) {
+        if (!anakArray || anakArray.length === 0) return '<span style="color:#aaa;">-</span>';
+        let html = '<div style="display:flex; flex-wrap:wrap; gap:5px;">';
+        anakArray.forEach((a, idx) => {
+            html += `
+                <div class="badge-anak">
+                    <b>Anak ${idx+1}:</b> ${a.jk}<br>
+                    ${a.foto !== '-' ? `<img src="${a.foto}" class="img-preview-table" onclick="lihatFotoBesar('${a.foto}')">` : '<span style="color:#aaa; font-size:10px;">No Foto</span>'}
+                </div>
+            `;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    function renderTabelKehamilan() {
+        const tbody = document.querySelector('#tabelKehamilan tbody');
+        tbody.innerHTML = '';
+        dbKehamilan.forEach((h, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${h.idInduk}</strong></td>
+                    <td>${h.pemacek}</td>
+                    <td>${h.tglKawin}</td>
+                    <td style="font-weight:bold; color:#276749;">${h.prediksiLahir}</td>
+                    <td><span style="padding:4px 8px; border-radius:4px; font-weight:bold; font-size:11px; ${h.status === 'Sudah Lahir' ? 'background:#c6f6d5; color:#22543d;' : 'background:#feebc8; color:#744210;'}">${h.status}</span></td>
+                    <td>${generateHtmlDetailAnak(h.anak)}</td>
+                    <td><button class="btn-hapus" onclick="hapusKehamilan(${index})">Hapus</button></td>
+                </tr>`;
+        });
+    }
+
+    document.getElementById('formKehamilan').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const status = selectStatusHamil.value;
+        const tglKawin = document.getElementById('tanggalKawin').value;
+        let dataAnak = [];
+
+        // Jika status Sudah Lahir, kumpulkan data rincian anak & fotonya
+        if (status === 'Sudah Lahir') {
+            const cards = document.querySelectorAll('#rincianAnak .card-anak');
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const jk = card.querySelector('.jk-anak').value;
+                const fileInput = card.querySelector('.foto-anak');
+                let stringFoto = '-';
+
+                if (fileInput.files && fileInput.files[0]) {
+                    try {
+                        stringFoto = await kompresGambar(fileInput.files[0]);
+                    } catch (err) {
+                        console.error("Gagal memuat gambar", err);
+                    }
+                }
+                dataAnak.push({ jk: jk, foto: stringFoto });
+            }
+        }
+
+        dbKehamilan.push({
+            idInduk: document.getElementById('idIndukHamil').value,
+            pemacek: document.getElementById('idPejantanMacek').value,
+            tglKawin: tglKawin,
+            prediksiLahir: status === 'Sudah Lahir' ? 'Selesai Lahir' : hitungPrediksiLahir(tglKawin),
+            status: status,
+            anak: dataAnak
+        });
+
+        localStorage.setItem('dbKehamilan_v4', JSON.stringify(dbKehamilan));
+        this.reset();
+        containerAnak.style.display = 'none';
+        document.getElementById('teksPrediksi').innerText = 'Prediksi Lahir: -';
+        renderTabelKehamilan();
+    });
+
+    function hapusKehamilan(index) {
+        if(confirm('Hapus riwayat kehamilan/kelahiran ini?')) {
+            dbKehamilan.splice(index, 1);
+            localStorage.setItem('dbKehamilan_v4', JSON.stringify(dbKehamilan));
+            renderTabelKehamilan();
+        }
+    }
+
+    // --- Pengelolaan TAB 3: Fitur Pencarian Terpadu ---
+    document.getElementById('inputPencarian').addEventListener('input', jalankanPencarian);
+
+    function jalankanPencarian() {
+        const keyword = document.getElementById('inputPencarian').value.toLowerCase();
+        
+        // Filter Data Kandang
+        const hasilKandang = dbKandang.filter(k => 
+            k.id.toLowerCase().includes(keyword) || 
+            k.induk.toLowerCase().includes(keyword) || 
+            k.pejantan.toLowerCase().includes(keyword) || 
+            k.status.toLowerCase().includes(keyword)
+        );
+        const tbodyK = document.querySelector('#tabelHasilKandang tbody');
+        tbodyK.innerHTML = '';
+        hasilKandang.forEach(k => {
+            tbodyK.innerHTML += `<tr>
+                <td><strong>${k.id}</strong></td><td>${k.jk}</td><td>${k.tglLahir} (${hitungUmurBulan(k.tglLahir)} bln)</td>
+                <td>${k.induk}</td><td>${k.pejantan}</td><td>${k.berat} Kg</td><td>${k.status}</td>
+            </tr>`;
+        });
+
+        // Filter Data Kehamilan & Anak
+        const hasilHamil = dbKehamilan.filter(h => {
+            const matchedAnak = h.anak ? h.anak.some(a => a.jk.toLowerCase().includes(keyword)) : false;
+            return h.idInduk.toLowerCase().includes(keyword) || 
+                   h.pemacek.toLowerCase().includes(keyword) ||
+                   h.status.toLowerCase().includes(keyword) ||
+                   matchedAnak;
+        });
+        const tbodyH = document.querySelector('#tabelHasilKehamilan tbody');
+        tbodyH.innerHTML = '';
+        hasilHamil.forEach(h => {
+            tbodyH.innerHTML += `<tr>
+                <td><strong>${h.idInduk}</strong></td><td>${h.pemacek}</td><td>${h.tglKawin}</td>
+                <td>${h.prediksiLahir}</td><td>${h.status}</td><td>${generateHtmlDetailAnak(h.anak)}</td>
+            </tr>`;
+        });
+    }
+
+    // --- Fungsi Pop-up Gambar ---
+    function lihatFotoBesar(src) {
+        const modal = document.getElementById('modalFoto');
+        document.getElementById('imgModal').src = src;
+        modal.style.display = 'flex';
+    }
+
+    function tutupModal() {
+        document.getElementById('modalFoto').style.display = 'none';
+    }
+
+    // --- Render Awal Saat Aplikasi Dibuka ---
+    renderTabelKandang();
+    renderTabelKehamilan();
+</script>
+
+</body>
+</html>
